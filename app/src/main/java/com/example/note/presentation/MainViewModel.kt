@@ -1,49 +1,32 @@
 package com.example.note.presentation
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.note.data.Dependencies
 import com.example.notes.data.NoteEntity
+import com.example.notes.data.NoteListRepositoryImpl
+import com.example.notes.domain.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel(): ViewModel() {
-    suspend fun getNotesFromDatabase(): List<NoteEntity> {
-        // This assumes you have a valid Dao instance set up
-        val dao = Dependencies.provideNoteDao()
+class MainViewModel(private val repositoryImpl: NoteListRepositoryImpl): ViewModel() {
+
+    suspend fun getNoteList(): List<Note> {
         return withContext(Dispatchers.IO) {
-            dao.getNoteList() // Fetch notes asynchronously
+            repositoryImpl.getNoteList()
         }
     }
 
-}
-
-fun deleteTestData(id: Int){
-    CoroutineScope(Dispatchers.IO).launch {
-        val noteDao = Dependencies.provideNoteDao()
-
-        val data = noteDao.getNoteList()
-
-        data.forEach {
-            if (it.id == id){
-                noteDao.delete(it)
+    suspend fun getNote(id: Int?): Note{
+        if(id != null) {
+            return withContext(Dispatchers.IO) {
+                repositoryImpl.getNote(id)
             }
         }
+        return Note(-1, "Ошибка", "id = null")
     }
-}
 
-fun insertTestData() {
-    CoroutineScope(Dispatchers.IO).launch {
-        val noteDao = Dependencies.provideNoteDao()
-
-        val testNotes = listOf(
-            NoteEntity(title = "Test Note 1", text = "This is the first test note."),
-            NoteEntity(title = "Test Note 2", text = "This is the second test note.")
-        )
-
-        testNotes.forEach {
-            noteDao.addNote(it)
-        }
-    }
 }
