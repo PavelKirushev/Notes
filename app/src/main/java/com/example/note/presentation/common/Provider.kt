@@ -1,4 +1,4 @@
-package com.example.note.presentation
+package com.example.note.presentation.common
 
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.example.note.R
