@@ -1,0 +1,12 @@
+package com.example.notes.data
+
+import com.example.notes.domain.Note
+
+//две функции нужны для преобразования данных удобных для UI и базы данных
+fun NoteEntity.toDomain(): Note {
+    return Note(id = this.id, title = this.title, text = this.text,)
+}
+
+fun Note.toEntity(): NoteEntity {
+    return NoteEntity(title = this.title, text = this.text,)
+}
