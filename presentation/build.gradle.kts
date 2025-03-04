@@ -52,9 +52,6 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     //Koin
     implementation ("io.insert-koin:koin-android:3.5.0")

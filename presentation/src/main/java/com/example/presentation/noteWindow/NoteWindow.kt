@@ -1,9 +1,11 @@
 package com.example.presentation.noteWindow
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -31,7 +33,9 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
     val scope = rememberCoroutineScope()
     var title by remember { mutableStateOf(note.title) }
     var text by remember { mutableStateOf(note.text) }
-    var flag by remember { mutableStateOf(false) }
+    var checkChange by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+    val noteCopy by remember { mutableStateOf(Note(note.id, note.title, note.text)) }
 
     // Обновляем заметку в MainViewModel при изменении title или text
     LaunchedEffect(title, text) {
@@ -43,24 +47,50 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
 
     Column(modifier = Modifier.padding(top = 20.dp)) {
         Row(
-            Modifier
-                .padding(10.dp)
-                .clickable {
-                    controller.navigate("home")
-                    // Удаление, если заголовок и текст пустые
-                    if (!flag) {
-                        scope.launch {
-                            mainViewModel.removeNote(note.id)
-                        }
-                    }
-                }
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.arrow_back_white),
-                contentDescription = "Назад",
-                Modifier.size(30.dp)
-            )
-            Text(text = "Назад", fontSize = 24.sp)
+            Row (
+                modifier = Modifier
+                    .padding(10.dp)
+                    .clickable {
+                        if (checkChange) {
+                            showDialog.value = true
+                        } else {
+                            if (title.isEmpty() && text.isEmpty()) {
+                                scope.launch {
+                                    mainViewModel.removeNote(note.id)
+                                }
+                            }
+                            controller.navigateUp()
+                        }
+
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.arrow_back_white),
+                    contentDescription = "Назад",
+                    Modifier.size(30.dp)
+                )
+                Text(text = "Назад", fontSize = 24.sp)
+            }
+            if (checkChange
+                ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.done),
+                    contentDescription = "ОК",
+                    Modifier
+                        .size(45.dp)
+                        .padding(top = 7.dp, end = 10.dp)
+                        .clickable {
+                            controller.navigateUp()
+                        }
+                )
+            }
+            if (showDialog.value) {
+                DialogBeforeExit(controller, mainViewModel, noteCopy, showDialog,)
+            }
         }
 
         Column(
@@ -73,7 +103,7 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                 fontSize = 40.sp,
                 onValueChange = {
                     title = it
-                    flag = !flag
+                    checkChange = true
                 }
             )
             SimpleTextField(
@@ -81,7 +111,7 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                 fontSize = 20.sp,
                 onValueChange = {
                     text = it
-                    flag = !flag
+                    checkChange = true
                 }
             )
         }

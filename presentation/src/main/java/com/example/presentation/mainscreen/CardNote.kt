@@ -9,6 +9,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +24,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CardNote(controller: NavHostController, note: Note, mainViewModel: MainViewModel) {
-    val scope = rememberCoroutineScope()
+    var checkDelete = remember { mutableStateOf(false) }
     Column {
         Card(
             elevation = CardDefaults.cardElevation(5.dp),
@@ -43,9 +46,7 @@ fun CardNote(controller: NavHostController, note: Note, mainViewModel: MainViewM
                             controller.navigate("details/" + note.id)
                                 },
                         onLongPress = {
-                            scope.launch {
-                                mainViewModel.removeNote(note.id)
-                            }
+                            checkDelete.value = true
                         }
                     )
                 },
@@ -58,6 +59,9 @@ fun CardNote(controller: NavHostController, note: Note, mainViewModel: MainViewM
                 HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 NoteText(note.text)
             }
+        }
+        if (checkDelete.value) {
+            DialogBeforeDelete(mainViewModel, note, checkDelete)
         }
     }
 }
