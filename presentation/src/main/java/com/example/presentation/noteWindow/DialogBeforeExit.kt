@@ -46,7 +46,11 @@ fun DialogBeforeExit(controller: NavHostController,
                         contentColor = Color.DarkGray
                     ), onClick = {
                         scope.launch {
-                            mainViewModel.editNote(noteCopy)
+                            if (noteCopy.title.isEmpty() && noteCopy.text.isEmpty()) {
+                                mainViewModel.removeNote(noteCopy.id)
+                            } else {
+                                mainViewModel.editNote(noteCopy)
+                            }
                             controller.navigateUp()
                             showDialog.value = false
                         }
