@@ -1,7 +1,10 @@
-# Стэк
+# Stack
 
-## MVVM
-## ROOM
-## KOIN
-## Compose
-## Многомодульность
+- Clean Architecture
+- Multi Module
+- MVVM
+- ROOM
+- KOIN
+- Compose
+- Coroutines
+- Flow
