@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.common.R
+import com.example.presentation.R
 import com.example.notes.domain.Note
 import com.example.presentation.MainViewModel
 import kotlinx.coroutines.CoroutineScope

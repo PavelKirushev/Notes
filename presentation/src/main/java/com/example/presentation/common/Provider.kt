@@ -1,7 +1,7 @@
 package com.example.presentation.common
 
 import androidx.compose.ui.text.googlefonts.GoogleFont
-import com.example.common.R
+import com.example.presentation.R
 
 object Provider {
     fun getProvider(): GoogleFont.Provider = GoogleFont.Provider(
