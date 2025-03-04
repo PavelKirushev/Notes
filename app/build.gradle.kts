@@ -58,7 +58,6 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":presentation"))
     implementation(project(":domain"))
-    implementation(project(":common"))
 
     //Room
     implementation("androidx.room:room-runtime:2.6.1")

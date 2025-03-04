@@ -3,7 +3,6 @@ package com.example.note.di
 import com.example.domain.domain.usecases.AddNoteUseCase
 import com.example.domain.domain.usecases.EditNoteUseCase
 import com.example.domain.domain.usecases.GetNoteListUseCase
-import com.example.domain.domain.usecases.GetNoteUseCase
 import com.example.domain.domain.usecases.RemoveNoteUseCase
 import org.koin.dsl.module
 
@@ -15,10 +14,6 @@ val domainModule = module {
 
     single<EditNoteUseCase> {
         EditNoteUseCase(noteListRepository = get())
-    }
-
-    single<GetNoteUseCase> {
-        GetNoteUseCase(noteListRepository = get())
     }
 
     single<GetNoteListUseCase> {

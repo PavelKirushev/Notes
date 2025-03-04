@@ -1,4 +1,4 @@
-package com.example.presentation.presentation.mainscreen.cardnote
+package com.example.presentation.mainscreen
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.presentation.presentation.common.Provider
+import com.example.presentation.common.Provider
 
 @Composable
 fun NoteText(noteText: String,
