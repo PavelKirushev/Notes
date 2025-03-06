@@ -4,7 +4,10 @@ import androidx.room.Dao
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
-
+/**
+ * Data access object for interaction with the DB with CRUD operations
+ *
+ */
 @Dao
 interface NoteDao {
     @Insert(entity = NoteEntity::class)

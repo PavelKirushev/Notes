@@ -15,19 +15,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.common.Provider
 
+/**
+ * Composable function for showing title on card note
+ */
 @Composable
-fun NoteTitleText(noteTitle: String,
-                  fontSize: TextUnit = 20.sp,
-                  color: Color = Color.White,
-                  overflow: TextOverflow = TextOverflow.Ellipsis){
+fun NoteTitleText(noteTitle: String,){
     Text(
         text = noteTitle,
-        fontSize = fontSize,
+        fontSize = 20.sp,
         maxLines = 1,
         modifier = Modifier
             .padding(top = 5.dp),
-        color = color,
-        overflow = overflow,
+        color = Color.White,
+        overflow = TextOverflow.Ellipsis,
         fontFamily = FontFamily(
             Font(
             googleFont = GoogleFont("Open Sans"),

@@ -14,19 +14,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presentation.common.Provider
 
+/**
+ * Composable function for showing text on card note
+ */
 @Composable
-fun NoteText(noteText: String,
-             fontSize: TextUnit = 15.sp,
-             color: Color = Color.LightGray,
-             overflow: TextOverflow = TextOverflow.Ellipsis){
+fun NoteText(noteText: String){
     Text(
         text = noteText,
-        fontSize = fontSize,
+        fontSize = 15.sp,
         maxLines = 1,
         modifier = Modifier
             .padding(top = 2.dp),
-        color = color,
-        overflow = overflow,
+        color = Color.LightGray,
+        overflow = TextOverflow.Ellipsis,
         fontFamily = FontFamily(
             Font(
             googleFont = GoogleFont("Open Sans"),

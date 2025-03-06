@@ -27,7 +27,13 @@ import com.example.notes.domain.Note
 import com.example.presentation.MainViewModel
 import kotlinx.coroutines.launch
 
-//окно редактирования заметки
+/**
+ * Composable function to add/edit/delete(if empty) note
+ *
+ * @param controller NavHostController for navigation in app
+ * @param note Note for show if it already exists
+ * @param mainViewModel MainViewModel to manage app state
+ */
 @Composable
 fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
@@ -36,8 +42,6 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
     var checkChange by remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
     val noteCopy by remember { mutableStateOf(Note(note.id, note.title, note.text)) }
-
-    // Обновляем заметку в MainViewModel при изменении title или text
     LaunchedEffect(title, text) {
         val updatedNote = note.copy(title = title, text = text)
         scope.launch {
@@ -104,7 +108,8 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                 onValueChange = {
                     title = it
                     checkChange = true
-                }
+                },
+                modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)
             )
             SimpleTextField(
                 text = text,
@@ -112,7 +117,8 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                 onValueChange = {
                     text = it
                     checkChange = true
-                }
+                },
+                modifier = Modifier.fillMaxSize().padding(bottom = 20.dp)
             )
         }
     }

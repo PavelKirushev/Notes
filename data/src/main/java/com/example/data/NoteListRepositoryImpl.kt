@@ -7,10 +7,13 @@ import com.example.notes.domain.NoteListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-//связывает доменный слой со слоем данных
+/**
+ * Implementation NoteListRepository in domain layer
+ *
+ * @param noteDao - Data access object for CRUD in the DB
+ *
+ */
 class NoteListRepositoryImpl(private val noteDao: NoteDao) : NoteListRepository {
-    //Room использует пул потоков, который уже настроен на работу с базой данных
-    //поэтому объявление скоупа и диспатчера ио не потребуется
     override suspend fun addNote(note: Note) {
         noteDao.addNote(note.toEntity())
     }

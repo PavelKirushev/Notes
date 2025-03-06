@@ -21,6 +21,14 @@ import com.example.notes.domain.Note
 import com.example.presentation.MainViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function for showing window before exit on main screen
+ *
+ * @param controller NavHostController for navigation in app
+ * @param mainViewModel MainViewModel to manage app state
+ * @param noteCopy Note for editing note in DB when we don't want to save change
+ * @param showDialog MutableState<Boolean> true - show, false - put away
+ */
 @Composable
 fun DialogBeforeExit(controller: NavHostController,
                      mainViewModel: MainViewModel,

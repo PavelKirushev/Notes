@@ -27,7 +27,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-//все заметки
+/**
+ * Composable function for showing all notes on main screen
+ *
+ * @param controller NavHostController for navigation in app
+ * @param mainViewModel MainViewModel to manage app state
+ */
 @Composable
 fun NotesScreen(controller: NavHostController, mainViewModel: MainViewModel) {
     val listNote by mainViewModel.noteListFlow.collectAsState()

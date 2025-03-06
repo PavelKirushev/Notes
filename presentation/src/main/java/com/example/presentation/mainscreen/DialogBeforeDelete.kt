@@ -20,6 +20,13 @@ import com.example.notes.domain.Note
 import com.example.presentation.MainViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function for showing window before delete note
+ *
+ * @param mainViewModel MainViewModel to manage app state
+ * @param note Note for following note we want to delete
+ * @param checkDelete MutableState<Boolean> true - show dialog, false - put away
+ */
 @Composable
 fun DialogBeforeDelete(mainViewModel: MainViewModel,
                        note: Note,

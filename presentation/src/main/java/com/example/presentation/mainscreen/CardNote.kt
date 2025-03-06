@@ -22,6 +22,14 @@ import com.example.notes.domain.Note
 import com.example.presentation.MainViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function for showing card of note
+ *
+ * @param controller NavHostController for navigation in app
+ * @param note Note for showing note
+ * @param mainViewModel MainViewModel to manage app state
+
+ */
 @Composable
 fun CardNote(controller: NavHostController, note: Note, mainViewModel: MainViewModel) {
     var checkDelete = remember { mutableStateOf(false) }
