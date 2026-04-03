@@ -2,10 +2,10 @@ package com.example.note.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.data.NoteDao
-import com.example.data.NoteDatabase
-import com.example.data.NoteListRepositoryImpl
-import com.example.notes.domain.NoteListRepository
+import com.example.note.data.room.NoteDao
+import com.example.note.data.room.NoteDatabase
+import com.example.note.data.room.NoteListRepositoryImpl
+import com.example.note.domain.NoteListRepository
 import org.koin.dsl.module
 
 val dataModule = module {

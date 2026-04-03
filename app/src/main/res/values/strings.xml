@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Note</string>
+    <string name="confirm_title">Подтверждение действия</string>
+    <string name="exit_confirm">Вы действительно хотите выйти без сохранения?</string>
+    <string name="delete_note_confirm">Вы действительно хотите удалить заметку?</string>
+    <string name="exit_button">Выйти</string>
+    <string name="save_button">Сохранить</string>
+    <string name="cancel_button">Отменить</string>
+    <string name="back_button">Назад</string>
+    <string name="delete_button">Удалить</string>
+    <string name="ready_button">Готово</string>
+    <string name="edit_button">Изменить</string>
+</resources>

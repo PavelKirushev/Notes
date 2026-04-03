@@ -1,11 +1,12 @@
 package com.example.note.di
 
+import com.example.note.presentation.MainViewModel
 import org.koin.dsl.module
 
 val appModule = module {
 
-    single <com.example.presentation.MainViewModel>{
-        com.example.presentation.MainViewModel(
+    single <MainViewModel>{
+        MainViewModel(
             addNoteUseCase = get(),
             editNoteUseCase = get(),
             getNoteListUseCase = get(),

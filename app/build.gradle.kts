@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.note"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.note"
@@ -30,8 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        }
     }
     buildFeatures {
         compose = true
@@ -39,18 +41,25 @@ android {
 }
 
 dependencies {
+    //Compose
+    implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.navigation.compose.android)
 
     //Koin
-    implementation ("io.insert-koin:koin-android:3.5.0")
-    implementation ("io.insert-koin:koin-androidx-compose:3.5.0")
-
-    //Modules
-    implementation(project(":data"))
-    implementation(project(":presentation"))
-    implementation(project(":domain"))
+    implementation (libs.koin.android.v420)
+    implementation (libs.koin.androidx.compose)
 
     //Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.material3.android)
+    kapt(libs.androidx.room.compiler)
+
+    //Google fonts
+    implementation(libs.ui.text.google.fonts)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }

@@ -1,9 +1,6 @@
 package com.example.note.di
 
-import com.example.domain.domain.usecases.AddNoteUseCase
-import com.example.domain.domain.usecases.EditNoteUseCase
-import com.example.domain.domain.usecases.GetNoteListUseCase
-import com.example.domain.domain.usecases.RemoveNoteUseCase
+import com.example.note.domain.usecases.*
 import org.koin.dsl.module
 
 val domainModule = module {
