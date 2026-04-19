@@ -49,8 +49,7 @@ class VoskHelper(private val context: Context) {
                             if (!modelFile.exists()) {
                                 modelFile.mkdirs()
                             }
-                            
-                            // Сначала проверим, что файлы существуют в assets
+
                             val assetManager = context.assets
                             val assetFiles = assetManager.list(modelPath)
                             Log.d(TAG, "Available files in model-ru: ${assetFiles?.joinToString(", ") ?: "none"}")

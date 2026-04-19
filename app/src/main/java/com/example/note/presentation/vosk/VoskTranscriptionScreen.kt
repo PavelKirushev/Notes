@@ -448,7 +448,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.RECORD_AUDIO),
-            Companion.PERMISSIONS_REQUEST_RECORD_AUDIO
+            PERMISSIONS_REQUEST_RECORD_AUDIO
         )
     }
 

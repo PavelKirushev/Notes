@@ -31,13 +31,13 @@ class MainViewModel(
         return noteListFlow.value.maxOfOrNull { it.id }?.plus(1) ?: 1
     }
 
-    suspend fun addNote(newNote: com.example.note.domain.Note) {
+    suspend fun addNote(newNote: Note) {
         addNoteUseCase.addNote(newNote)
         val updatedList = _noteListFlow.value + newNote
         _noteListFlow.value = updatedList
     }
 
-    suspend fun editNote(updatedNote: com.example.note.domain.Note) {
+    suspend fun editNote(updatedNote: Note) {
         editNoteUseCase.editNote(updatedNote)
         val updatedList = _noteListFlow.value.map { note ->
             if (note.id == updatedNote.id) updatedNote else note
@@ -51,7 +51,11 @@ class MainViewModel(
             val updatedList = _noteListFlow.value.filter { it.id != noteId }
             _noteListFlow.value = updatedList
         } catch (e: NoSuchElementException) {
-            Log.e("ERROR", "Note with id $noteId not found")
+            Log.e(TAG, "Note with id $noteId not found")
         }
+    }
+
+    companion object {
+        private const val TAG = "MainViewModel"
     }
 }
