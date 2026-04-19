@@ -8,20 +8,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.note.presentation.MainViewModel
-import kotlinx.coroutines.launch
 import com.example.note.R
 import com.example.note.domain.Note
+import com.example.note.presentation.MainViewModel
+import kotlinx.coroutines.launch
 
 /**
  * Composable function for showing window before exit on main screen
@@ -32,17 +32,23 @@ import com.example.note.domain.Note
  * @param showDialog MutableState<Boolean> true - show, false - put away
  */
 @Composable
-fun DialogBeforeExit(controller: NavHostController,
-                     mainViewModel: MainViewModel,
-                     noteCopy: Note,
-                     showDialog: MutableState<Boolean>,) {
+fun DialogBeforeExit(
+    controller: NavHostController,
+    mainViewModel: MainViewModel,
+    noteCopy: Note,
+    showDialog: MutableState<Boolean>,
+) {
     val scope = rememberCoroutineScope()
+    val scheme = MaterialTheme.colorScheme
     AlertDialog(
-        onDismissRequest = {showDialog.value = false},
+        onDismissRequest = { showDialog.value = false },
+        containerColor = scheme.surfaceContainerHigh,
+        titleContentColor = scheme.onSurface,
+        textContentColor = scheme.onSurfaceVariant,
         title = { Text(stringResource(R.string.confirm_title)) },
         text = { Text(stringResource(R.string.exit_confirm)) },
         confirmButton = {
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -50,14 +56,14 @@ fun DialogBeforeExit(controller: NavHostController,
                         end = dimensionResource(R.dimen.padding_20),
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
-
-                ){
+            ) {
                 Button(
                     shape = RoundedCornerShape(dimensionResource(R.dimen.padding_15)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray,
-                        contentColor = Color.DarkGray
-                    ), onClick = {
+                        containerColor = scheme.surfaceContainerHighest,
+                        contentColor = scheme.onSurface
+                    ),
+                    onClick = {
                         scope.launch {
                             if (noteCopy.title.isEmpty() && noteCopy.text.isEmpty()) {
                                 mainViewModel.removeNote(noteCopy.id)
@@ -75,9 +81,10 @@ fun DialogBeforeExit(controller: NavHostController,
                 Button(
                     shape = RoundedCornerShape(dimensionResource(R.dimen.padding_15)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.DarkGray,
-                        contentColor = Color.LightGray
-                    ), onClick = {
+                        containerColor = scheme.primaryContainer,
+                        contentColor = scheme.onPrimaryContainer
+                    ),
+                    onClick = {
                         controller.navigateUp()
                         showDialog.value = false
                     }
@@ -85,7 +92,6 @@ fun DialogBeforeExit(controller: NavHostController,
                     Text(stringResource(R.string.save_button), fontSize = 15.sp)
                 }
             }
-
         }
     )
 }

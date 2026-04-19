@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -43,13 +46,15 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
     var text by remember { mutableStateOf(note.text) }
     var checkChange by remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
-    val noteCopy by remember { mutableStateOf(
-        Note(
-            note.id,
-            note.title,
-            note.text
+    val noteCopy by remember {
+        mutableStateOf(
+            Note(
+                note.id,
+                note.title,
+                note.text
+            )
         )
-    ) }
+    }
     LaunchedEffect(title, text) {
         val updatedNote = note.copy(title = title, text = text)
         scope.launch {
@@ -57,58 +62,77 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
         }
     }
 
-    Column(modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_20))) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row (
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_10))
-                    .clickable {
-                        if (checkChange) {
-                            showDialog.value = true
-                        } else {
-                            if (title.isEmpty() && text.isEmpty()) {
-                                scope.launch {
-                                    mainViewModel.removeNote(note.id)
-                                }
-                            }
-                            controller.navigateUp()
-                        }
+    val scheme = MaterialTheme.colorScheme
 
-                    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = scheme.surfaceContainerHigh,
+            tonalElevation = 2.dp,
+            shadowElevation = 0.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow_back_white),
-                    contentDescription = stringResource(R.string.back_button),
-                    Modifier.size(dimensionResource(R.dimen.padding_30))
-                )
-                Text(text = stringResource(R.string.back_button), fontSize = 24.sp)
-            }
-            if (checkChange) {
-                Icon(
-                    painter = painterResource(id = R.drawable.done),
-                    contentDescription = stringResource(R.string.ready_button),
-                    Modifier
-                        .size(45.dp)
-                        .padding(
-                            top = dimensionResource(R.dimen.padding_7),
-                            end = dimensionResource(R.dimen.padding_10))
+                Row(
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_10))
                         .clickable {
-                            controller.navigateUp()
-                        }
-                )
-            }
-            if (showDialog.value) {
-                DialogBeforeExit(controller, mainViewModel, noteCopy, showDialog,)
+                            if (checkChange) {
+                                showDialog.value = true
+                            } else {
+                                if (title.isEmpty() && text.isEmpty()) {
+                                    scope.launch {
+                                        mainViewModel.removeNote(note.id)
+                                    }
+                                }
+                                controller.navigateUp()
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_back_white),
+                        contentDescription = stringResource(R.string.back_button),
+                        Modifier.size(dimensionResource(R.dimen.padding_30)),
+                        tint = scheme.primary
+                    )
+                    Text(
+                        text = stringResource(R.string.back_button),
+                        fontSize = 24.sp,
+                        color = scheme.onSurface
+                    )
+                }
+                if (checkChange) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.done),
+                        contentDescription = stringResource(R.string.ready_button),
+                        Modifier
+                            .size(45.dp)
+                            .padding(
+                                top = dimensionResource(R.dimen.padding_7),
+                                end = dimensionResource(R.dimen.padding_10)
+                            )
+                            .clickable {
+                                controller.navigateUp()
+                            },
+                        tint = scheme.primary
+                    )
+                }
+                if (showDialog.value) {
+                    DialogBeforeExit(controller, mainViewModel, noteCopy, showDialog)
+                }
             }
         }
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .padding(
                     top = dimensionResource(R.dimen.padding_20),
                     start = dimensionResource(R.dimen.padding_30),
@@ -123,7 +147,9 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                     title = it
                     checkChange = true
                 },
-                modifier = Modifier.fillMaxWidth().padding(bottom = dimensionResource(R.dimen.padding_20))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_20))
             )
             SimpleTextField(
                 text = text,
@@ -132,7 +158,10 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                     text = it
                     checkChange = true
                 },
-                modifier = Modifier.fillMaxSize().padding(bottom = dimensionResource(R.dimen.padding_20))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = dimensionResource(R.dimen.padding_20))
             )
         }
     }

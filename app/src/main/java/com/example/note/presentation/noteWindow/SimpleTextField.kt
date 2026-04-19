@@ -1,9 +1,9 @@
 package com.example.note.presentation.noteWindow
 
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 
@@ -22,10 +22,15 @@ fun SimpleTextField(
     fontSize: TextUnit,
     modifier: Modifier
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     BasicTextField(
         value = text,
         onValueChange = onValueChange,
-        textStyle = TextStyle(color = Color.Black, fontSize = fontSize),
+        textStyle = TextStyle(
+            color = colorScheme.onSurface,
+            fontSize = fontSize,
+            fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+        ),
         singleLine = false,
         modifier = modifier
     )

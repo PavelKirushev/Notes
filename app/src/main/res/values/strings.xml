@@ -10,4 +10,7 @@
     <string name="delete_button">Удалить</string>
     <string name="ready_button">Готово</string>
     <string name="edit_button">Изменить</string>
+    <string name="screen_notes_title">Заметки</string>
+    <string name="screen_transcription_title">Транскрибация</string>
+    <string name="transcribe_action">Транскрибировать</string>
 </resources>

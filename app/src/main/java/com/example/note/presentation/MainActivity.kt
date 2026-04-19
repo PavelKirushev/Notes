@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main(){
-    val mainScreenViewModel: MainScreenViewModel = koinViewModel()
+    val mainScreenViewModel: MainViewModel = koinViewModel()
     val controller = rememberNavController()
     NoteTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

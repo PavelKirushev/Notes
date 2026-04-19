@@ -1,8 +1,21 @@
+import java.util.UUID
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
+}
+
+tasks.register("genUUID") {
+    val uuid = UUID.randomUUID().toString()
+    val modelDir = file("$buildDir/generated/assets/model-ru")
+    val uuidFile = file("$modelDir/uuid")
+
+    doLast {
+        modelDir.mkdirs()
+        uuidFile.writeText(uuid)
+    }
 }
 
 android {
@@ -38,12 +51,19 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("$buildDir/generated/assets")
+        }
+    }
 }
 
 dependencies {
     //Compose
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.material.icons.extended)
 
     //Koin
     implementation (libs.koin.android.v420)
@@ -62,4 +82,20 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    //Vosk
+    implementation(libs.vosk.android)
+    implementation(libs.tensorflow.lite)
+}
+
+android {
+    packaging {
+        resources {
+            excludes += "/META-INF/**"
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn("genUUID")
 }

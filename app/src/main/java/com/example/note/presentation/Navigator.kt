@@ -31,5 +31,7 @@ fun Navigator(mainViewModel: MainViewModel, controller: NavHostController, ){
             }
 
         }
+        composable("transcription") {
+        }
     }
 }
