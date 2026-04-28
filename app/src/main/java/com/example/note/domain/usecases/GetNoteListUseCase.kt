@@ -13,4 +13,4 @@ class GetNoteListUseCase(private val noteListRepository: NoteListRepository){
     suspend fun getNoteList(): Flow<List<Note>> {
         return noteListRepository.getNoteList()
     }
-}   
+}

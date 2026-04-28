@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("io.gitlab.arturbosch.detekt")
     kotlin("kapt")
 }
 
@@ -57,6 +58,19 @@ android {
             assets.srcDirs("$buildDir/generated/assets")
         }
     }
+}
+
+detekt {
+    autoCorrect = true
+    toolVersion = "1.23.8"
+    config.setFrom(files("$rootDir/detekt.yml"))
+    buildUponDefaultConfig = true
+    source.setFrom(
+        files(
+            "$projectDir/src/main/java",
+            "$projectDir/src/main/kotlin"
+        )
+    )
 }
 
 dependencies {

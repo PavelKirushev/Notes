@@ -322,10 +322,9 @@ class VoskTranscriptionScreen : ComponentActivity() {
     }
 
     private fun buildWavPcm16Mono(pcmData: ByteArray, sampleRate: Int): ByteArray {
-        val bitsPerSample = 16
         val channels = 1
-        val byteRate = sampleRate * channels * bitsPerSample / 8
-        val blockAlign = channels * bitsPerSample / 8
+        val byteRate = sampleRate * channels * BITS_PER_SAMPLE / 8
+        val blockAlign = channels * BITS_PER_SAMPLE / 8
         val header = ByteArray(44)
         ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).apply {
             put("RIFF".toByteArray(Charsets.US_ASCII))
@@ -338,13 +337,14 @@ class VoskTranscriptionScreen : ComponentActivity() {
             putInt(sampleRate)
             putInt(byteRate)
             putShort(blockAlign.toShort())
-            putShort(bitsPerSample.toShort())
+            putShort(BITS_PER_SAMPLE.toShort())
             put("data".toByteArray(Charsets.US_ASCII))
             putInt(pcmData.size)
         }
         return header + pcmData
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun startRecording(): Boolean {
         if (!checkPermission()) {
             requestPermission()
@@ -355,7 +355,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
             outputFile = "${externalCacheDir?.absolutePath}/$fileName"
 
             val bufferSize = AudioRecord.getMinBufferSize(
-                16000,
+                SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT
             )
@@ -366,7 +366,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
 
             val record = AudioRecord(
                 MediaRecorder.AudioSource.MIC,
-                16000,
+                SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 bufferSize * 2
@@ -394,7 +394,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
                 }
                 val pcm = baos.toByteArray()
                 try {
-                    val wav = buildWavPcm16Mono(pcm, 16000)
+                    val wav = buildWavPcm16Mono(pcm, SAMPLE_RATE)
                     FileOutputStream(path).use { it.write(wav) }
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to write WAV", e)
@@ -410,7 +410,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
                     }
                 }
             }
-            handler.postDelayed(autoStopRunnable!!, 30_000)
+            handler.postDelayed(autoStopRunnable!!, DELAY_MILLIS)
             return true
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка при записи: ${e.message}", e)
@@ -429,7 +429,7 @@ class VoskTranscriptionScreen : ComponentActivity() {
             audioRecord?.stop()
             audioRecord?.release()
             audioRecord = null
-            recordingThread?.join(10_000)
+            recordingThread?.join(MILLIS)
             recordingThread = null
             Toast.makeText(this, "Запись остановлена", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
@@ -462,5 +462,9 @@ class VoskTranscriptionScreen : ComponentActivity() {
     companion object {
         private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
         private const val TAG = "VoskTranscription"
+        private const val MILLIS = 10_000L
+        private const val DELAY_MILLIS = 30_000L
+        private const val SAMPLE_RATE = 16000
+        private const val BITS_PER_SAMPLE = 16
     }
 }

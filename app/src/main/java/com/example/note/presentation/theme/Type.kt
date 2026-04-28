@@ -13,10 +13,14 @@ private const val FONT = "Plus Jakarta Sans"
 private val PlusJakarta = GoogleFont(FONT)
 
 private val NoteFontFamily = FontFamily(
-    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(), weight = FontWeight.Normal, style = FontStyle.Normal),
-    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(), weight = FontWeight.Medium, style = FontStyle.Normal),
-    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(), weight = FontWeight.SemiBold, style = FontStyle.Normal),
-    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(), weight = FontWeight.Bold, style = FontStyle.Normal)
+    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(),
+         weight = FontWeight.Normal, style = FontStyle.Normal),
+    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(),
+         weight = FontWeight.Medium, style = FontStyle.Normal),
+    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(),
+         weight = FontWeight.SemiBold, style = FontStyle.Normal),
+    Font(googleFont = PlusJakarta, fontProvider = GoogleFontProvider.getProvider(),
+         weight = FontWeight.Bold, style = FontStyle.Normal)
 )
 
 private val base = Typography()

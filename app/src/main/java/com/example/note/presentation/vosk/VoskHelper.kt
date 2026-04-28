@@ -15,14 +15,14 @@ import java.io.InputStream
 class VoskHelper(private val context: Context) {
     private var model: Model? = null
     private var isModelInitialized = false
-    private val TAG = "VoskHelper"
 
     fun isModelReady(): Boolean {
         return isModelInitialized && model != null
     }
 
     fun getModel(): Model? = model
-    
+
+    @Suppress("CyclomaticComplexMethod")
     fun initializeModel(callback: (Boolean) -> Unit) {
         try {
             StorageService.unpack(context, "model-ru", "model",
@@ -121,11 +121,12 @@ class VoskHelper(private val context: Context) {
         }
     }
 
-    fun transcribeAudio(inputStream: InputStream, callback: (String) -> Unit) {
+    private fun transcribeAudio(inputStream: InputStream, callback: (String) -> Unit) {
         try {
+            @Suppress("UseCheckOrError")
             val model = this.model ?: throw IllegalStateException("Model not initialized")
 
-            val recognizer = Recognizer(model, 16000.0f)
+            val recognizer = Recognizer(model, SAMPLE_RATE)
 
             val data = inputStream.readBytes()
             
@@ -189,5 +190,10 @@ class VoskHelper(private val context: Context) {
 
     fun shutdown() {
         model?.close()
+    }
+
+    companion object {
+        private const val TAG = "VoskHelper"
+        private const val SAMPLE_RATE = 16000.0f
     }
 }

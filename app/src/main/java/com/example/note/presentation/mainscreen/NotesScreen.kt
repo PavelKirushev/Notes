@@ -37,6 +37,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val DETAILS_PATH = "details/"
+private const val X_OFFSET = 1200f
+private const val Y_OFFSET = 1600f
 
 /**
  * Composable function for showing all notes on main screen
@@ -62,7 +64,7 @@ fun NotesScreen(controller: NavHostController, mainViewModel: MainViewModel) {
                         scheme.surfaceContainerHigh.copy(alpha = 0.35f)
                     ),
                     start = Offset(0f, 0f),
-                    end = Offset(1200f, 1600f)
+                    end = Offset(X_OFFSET, Y_OFFSET)
                 )
             )
     ) {

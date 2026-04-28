@@ -27,12 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name="com.example.note.presentation.vosk.AudioTranscriptionActivity"
-            android:exported="false"
-            android:label="Транскрибация аудио" />
-
         <activity
             android:name="com.example.note.presentation.vosk.VoskTranscriptionScreen"
             android:exported="false"

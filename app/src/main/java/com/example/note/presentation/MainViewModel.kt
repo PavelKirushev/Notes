@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.note.domain.Note
-import com.example.note.domain.usecases.*
+import com.example.note.domain.usecases.AddNoteUseCase
+import com.example.note.domain.usecases.EditNoteUseCase
+import com.example.note.domain.usecases.GetNoteListUseCase
+import com.example.note.domain.usecases.RemoveNoteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
