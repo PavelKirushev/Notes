@@ -8,6 +8,15 @@ import (
 	"github.com/onweg/backend/internal/domain"
 )
 
+// SubscriptionRepository — контракт для работы с подписками.
+type SubscriptionRepository interface {
+	// GetByUserID возвращает подписку пользователя; ErrSubscriptionNotFound если нет.
+	GetByUserID(ctx context.Context, userID int64) (*domain.Subscription, error)
+
+	// Upsert создаёт или обновляет подписку пользователя.
+	Upsert(ctx context.Context, sub *domain.Subscription) (*domain.Subscription, error)
+}
+
 // UserRepository — контракт для работы с пользователями в хранилище.
 type UserRepository interface {
 	// Create сохраняет нового пользователя и возвращает его с заполненными полями.

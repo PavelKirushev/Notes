@@ -29,10 +29,10 @@ func main() {
 		Level: slog.LevelInfo,
 	})))
 
-	// 1. Конфигурация из ENV
+	// 1. Конфигурация
 	cfg := config.Load()
 
-	// 2. Подключение к БД
+	// 2. База данных
 	db, err := database.NewPostgres(database.Options{
 		Host:     cfg.Database.Host,
 		Port:     cfg.Database.Port,
@@ -53,11 +53,15 @@ func main() {
 	jwtManager := jwt.NewManager(cfg.Auth.JWTSecret, cfg.Auth.TokenTTL)
 
 	userRepo := postgres.NewUserRepository(db)
+	subRepo := postgres.NewSubscriptionRepository(db)
+
 	authSvc := service.NewAuthService(userRepo, hasher, jwtManager)
 	userSvc := service.NewUserService(userRepo)
+	subSvc := service.NewSubscriptionService(subRepo)
 
 	authHandler := handler.NewAuthHandler(authSvc)
 	userHandler := handler.NewUserHandler(userSvc)
+	subHandler := handler.NewSubscriptionHandler(subSvc)
 
 	jwtMiddleware := authmw.NewJWTMiddleware(jwtManager)
 	superUserMiddleware := authmw.NewSuperUserMiddleware(userRepo)
@@ -76,6 +80,8 @@ func main() {
 	})
 
 	r.Route("/api/v1", func(r chi.Router) {
+
+		// ── Аутентификация ────────────────────────────────────────────────────
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/register", authHandler.Register)
 			r.Post("/login", authHandler.Login)
@@ -86,10 +92,19 @@ func main() {
 			})
 		})
 
-		r.Route("/users", func(r chi.Router) {
+		// ── Подписка (текущий пользователь) ──────────────────────────────────
+		r.Route("/subscriptions", func(r chi.Router) {
+			r.Use(jwtMiddleware.Authenticate)
+			r.Get("/me", subHandler.GetMy) // проверить свою подписку
+		})
+
+		// ── Админ (только суперпользователь) ─────────────────────────────────
+		r.Route("/admin", func(r chi.Router) {
 			r.Use(jwtMiddleware.Authenticate)
 			r.Use(superUserMiddleware.RequireSuperUser)
-			r.Get("/", userHandler.List)
+
+			r.Get("/users", userHandler.List)                            // все пользователи
+			r.Put("/users/{userID}/subscription", subHandler.Set)       // выставить подписку
 		})
 	})
 
