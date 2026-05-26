@@ -1,0 +1,61 @@
+# Два сервиса: postgres (БД) + backend (Go-сервер)
+# Запуск: docker-compose up -d --build
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: app_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB:       ${DB_NAME:-appdb}
+    ports:
+      - "5432:5432"          # доступен снаружи для psql / DBeaver
+    volumes:
+      - postgres_data:/var/lib/postgresql/data          # персистентные данные
+      - ./migrations:/docker-entrypoint-initdb.d:ro     # авто-миграция при первом старте
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-appdb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Backend (Go) ─────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_backend
+    restart: unless-stopped
+    environment:
+      SERVER_PORT:    ${SERVER_PORT:-8080}
+      # Используем имя сервиса "postgres" как хост внутри Docker-сети
+      DB_HOST:        postgres
+      DB_PORT:        5432
+      DB_USER:        ${DB_USER:-postgres}
+      DB_PASSWORD:    ${DB_PASSWORD:-postgres}
+      DB_NAME:        ${DB_NAME:-appdb}
+      DB_SSLMODE:     disable
+      DB_MAX_CONNS:   ${DB_MAX_CONNS:-25}
+      JWT_SECRET:     ${JWT_SECRET:-change-me-in-production-min-32-chars}
+      JWT_TOKEN_TTL:  ${JWT_TOKEN_TTL:-24h}
+      BCRYPT_COST:    ${BCRYPT_COST:-12}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy   # ждём healthcheck БД перед стартом
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  postgres_data:
+    driver: local

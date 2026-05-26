@@ -1,0 +1,16 @@
+# Бинарник
+/server
+/backend
+
+# Env с секретами
+.env
+
+# Go
+*.test
+*.out
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
