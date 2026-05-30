@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,8 +36,6 @@ import com.example.note.R
 import com.example.note.domain.Note
 import com.example.note.presentation.MainViewModel
 import com.example.note.presentation.vosk.VoskTranscriptionScreen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val DETAILS_PATH = "details/"
@@ -58,7 +57,7 @@ fun NotesScreen(
     onLogout: () -> Unit = {}
 ) {
     val listNote by mainViewModel.noteListFlow.collectAsState()
-    val scope = CoroutineScope(Dispatchers.IO)
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scheme = MaterialTheme.colorScheme
 
