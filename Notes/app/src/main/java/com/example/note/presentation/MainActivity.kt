@@ -16,21 +16,18 @@ import org.koin.androidx.compose.koinViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Main()
-        }
+        setContent { Main() }
     }
 }
 
 @Composable
 fun Main() {
-    val mainViewModel: MainViewModel = koinViewModel()
     val authViewModel: AuthViewModel = koinViewModel()
     val controller = rememberNavController()
 
     NoteTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            Navigator(mainViewModel, authViewModel, controller)
+            Navigator(authViewModel = authViewModel, controller = controller)
         }
     }
 }

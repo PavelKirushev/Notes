@@ -104,16 +104,11 @@ fun NotesScreen(
                     ) {
                         IconButton(
                             onClick = {
+                                val newId = mainViewModel.getNextNoteId()
                                 scope.launch {
-                                    mainViewModel.addNote(
-                                        Note(
-                                            mainViewModel.getNextNoteId(),
-                                            "",
-                                            ""
-                                        )
-                                    )
+                                    mainViewModel.addNote(Note(newId, "", ""))
                                 }
-                                controller.navigate(DETAILS_PATH + mainViewModel.getNextNoteId())
+                                controller.navigate(DETAILS_PATH + newId)
                             }
                         ) {
                             Icon(

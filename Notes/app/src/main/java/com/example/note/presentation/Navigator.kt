@@ -18,6 +18,7 @@ import com.example.note.presentation.auth.RegisterScreen
 import com.example.note.presentation.auth.TokenState
 import com.example.note.presentation.mainscreen.NotesScreen
 import com.example.note.presentation.noteWindow.NoteWindow
+import org.koin.androidx.compose.koinViewModel
 
 private const val LOGIN_ROUTE = "login"
 private const val REGISTER_ROUTE = "register"
@@ -29,13 +30,11 @@ private const val NOTE_ID_ROUTE = "noteId"
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Navigator(
-    mainViewModel: MainViewModel,
     authViewModel: AuthViewModel,
     controller: NavHostController
 ) {
     val tokenState by authViewModel.tokenState.collectAsState()
 
-    // Пока идёт проверка токена — ничего не показываем (пустой экран на долю секунды)
     if (tokenState is TokenState.Checking) {
         Box(modifier = Modifier.fillMaxSize())
         return
@@ -73,6 +72,11 @@ fun Navigator(
         }
 
         composable(HOME_ROUTE) {
+            // MainViewModel создаётся здесь — скопирован к этому nav-entry.
+            // При навигации на HOME после смены пользователя entry пересоздаётся
+            // → новый MainViewModel → новая подписка на Room с актуальным userId.
+            val mainViewModel: MainViewModel = koinViewModel()
+
             NotesScreen(
                 controller = controller,
                 mainViewModel = mainViewModel,
@@ -87,11 +91,8 @@ fun Navigator(
             )
         }
 
-        composable(ADMIN_ROUTE) {
-            AdminScreen(controller = controller)
-        }
-
         composable(NOTE_DETAILS_ROUTE) {
+            val mainViewModel: MainViewModel = koinViewModel()
             val noteId = it.arguments?.getString(NOTE_ID_ROUTE)?.toIntOrNull()
             if (noteId != null) {
                 val note = mainViewModel.noteListFlow.value.find { note -> note.id == noteId }
@@ -100,9 +101,12 @@ fun Navigator(
                 }
             }
         }
+
+        composable(ADMIN_ROUTE) {
+            AdminScreen(controller = controller)
+        }
     }
 
-    // Если токен стал невалидным во время работы приложения — отправляем на логин
     LaunchedEffect(tokenState) {
         if (tokenState is TokenState.Invalid &&
             controller.currentDestination?.route != LOGIN_ROUTE &&
