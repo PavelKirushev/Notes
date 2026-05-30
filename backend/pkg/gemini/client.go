@@ -71,7 +71,7 @@ func (c *Client) Summarize(ctx context.Context, text string) (string, error) {
 		return "", fmt.Errorf("gemini: marshal: %w", err)
 	}
 
-	url := "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + c.apiKey
+	url := "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + c.apiKey
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(reqBody))
 	if err != nil {

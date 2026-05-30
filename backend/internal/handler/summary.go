@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	authmw "github.com/onweg/backend/internal/middleware"
@@ -56,6 +57,7 @@ func (h *SummaryHandler) Summarize(w http.ResponseWriter, r *http.Request) {
 
 	summary, err := h.gemini.Summarize(r.Context(), req.Text)
 	if err != nil {
+		slog.Error("gemini error", "error", err)
 		writeError(w, http.StatusInternalServerError, "failed to generate summary")
 		return
 	}
