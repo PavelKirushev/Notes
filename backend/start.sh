@@ -11,12 +11,8 @@ if [ -n "$POSTGRES_RUNNING" ] && [ -n "$BACKEND_RUNNING" ]; then
   exit 0
 fi
 
-BACKEND_IMAGE=$(docker images -q backend-backend 2>/dev/null)
-
-if [ -z "$BACKEND_IMAGE" ]; then
-  echo "building image..."
-  DOCKER_BUILDKIT=0 docker-compose build -q
-fi
+echo "building backend..."
+DOCKER_BUILDKIT=0 docker-compose build -q backend
 
 echo "starting..."
 docker-compose up -d
