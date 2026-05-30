@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 // Для эмулятора Android: 10.0.2.2 = localhost хост-машины
 // Для реального устройства: замени на IP компьютера в локальной сети (напр. 192.168.1.10)
-private const val BASE_URL = "http://10.0.2.2:8080/"
+private const val BASE_URL = "http://192.168.1.10:8080/"
 
 val authModule = module {
 
