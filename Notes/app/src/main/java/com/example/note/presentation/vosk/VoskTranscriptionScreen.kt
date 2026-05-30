@@ -184,9 +184,8 @@ class VoskTranscriptionScreen : ComponentActivity() {
                                 return@IconButton
                             }
                             scope.launch(Dispatchers.IO) {
-                                val id = mainViewModel.getNextNoteId()
                                 val title = noteTitle.trim().ifEmpty { "Голосовая заметка" }
-                                mainViewModel.addNote(Note(id, title, body))
+                                mainViewModel.addNote(Note(0, title, body))
                                 runOnUiThread { finish() }
                             }
                         }

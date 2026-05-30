@@ -67,14 +67,13 @@ class MainViewModelTest {
 //    }
 
     @Test
-    fun `getNextNoteId should return 1 when no notes exist`() = runTest {
-        val notes = emptyList<Note>()
+    fun `addNote should generate id automatically`() = runTest {
+        val note = Note(0, "Title", "Body")
+        coEvery { addNoteUseCase.addNote(note) } returns 1
 
-        coEvery { getNoteListUseCase.getNoteList() } returns flowOf(notes)
+        val id = viewModel.addNote(note)
 
-        val nextId = viewModel.getNextNoteId()
-
-        assertEquals(1, nextId)
+        assertEquals(1, id)
     }
 
     @Test
