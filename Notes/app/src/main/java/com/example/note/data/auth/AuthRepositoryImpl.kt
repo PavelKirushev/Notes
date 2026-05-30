@@ -47,6 +47,22 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun validateToken(): Boolean {
+        val token = tokenStorage.getToken() ?: return false
+        return try {
+            val response = api.me("Bearer $token")
+            if (response.code() == 401) {
+                tokenStorage.clearToken()
+                false
+            } else {
+                response.isSuccessful
+            }
+        } catch (e: Exception) {
+            // Нет сети — считаем токен валидным, не разлогиниваем
+            true
+        }
+    }
+
     override fun isLoggedIn(): Boolean = tokenStorage.hasToken()
 
     override fun logout() = tokenStorage.clearToken()
