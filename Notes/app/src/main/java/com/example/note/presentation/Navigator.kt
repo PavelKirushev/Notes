@@ -76,11 +76,13 @@ fun Navigator(
             // При навигации на HOME после смены пользователя entry пересоздаётся
             // → новый MainViewModel → новая подписка на Room с актуальным userId.
             val mainViewModel: MainViewModel = koinViewModel()
+            val isSubscribed by authViewModel.isSubscribed.collectAsState()
 
             NotesScreen(
                 controller = controller,
                 mainViewModel = mainViewModel,
                 isSuper = authViewModel.isSuper(),
+                isSubscribed = isSubscribed,
                 onAdminClick = { controller.navigate(ADMIN_ROUTE) },
                 onLogout = {
                     authViewModel.logout()

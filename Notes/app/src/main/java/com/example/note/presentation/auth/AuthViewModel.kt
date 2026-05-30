@@ -16,9 +16,9 @@ sealed class AuthUiState {
 }
 
 sealed class TokenState {
-    object Checking : TokenState()   // идёт проверка — показываем сплэш/пусто
-    object Valid : TokenState()      // токен жив → главная
-    object Invalid : TokenState()    // токена нет или истёк → логин
+    object Checking : TokenState()
+    object Valid : TokenState()
+    object Invalid : TokenState()
 }
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
@@ -28,6 +28,10 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _tokenState = MutableStateFlow<TokenState>(TokenState.Checking)
     val tokenState: StateFlow<TokenState> = _tokenState.asStateFlow()
+
+    // true если подписка активна ИЛИ пользователь суперпользователь
+    private val _isSubscribed = MutableStateFlow(false)
+    val isSubscribed: StateFlow<Boolean> = _isSubscribed.asStateFlow()
 
     init {
         checkToken()
@@ -40,8 +44,17 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
         viewModelScope.launch {
             val valid = authRepository.validateToken()
-            _tokenState.value = if (valid) TokenState.Valid else TokenState.Invalid
+            if (valid) {
+                _tokenState.value = TokenState.Valid
+                loadSubscriptionStatus()
+            } else {
+                _tokenState.value = TokenState.Invalid
+            }
         }
+    }
+
+    private suspend fun loadSubscriptionStatus() {
+        _isSubscribed.value = authRepository.isSuper() || authRepository.checkSubscription()
     }
 
     fun isLoggedIn(): Boolean = authRepository.isLoggedIn()
@@ -52,10 +65,12 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         if (!validate(email, password)) return
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            _uiState.value = authRepository.login(email.trim(), password).fold(
+            val result = authRepository.login(email.trim(), password)
+            _uiState.value = result.fold(
                 onSuccess = { AuthUiState.Success },
                 onFailure = { AuthUiState.Error(it.message ?: "Ошибка входа") }
             )
+            if (result.isSuccess) loadSubscriptionStatus()
         }
     }
 
@@ -67,15 +82,18 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         if (!validate(email, password)) return
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            _uiState.value = authRepository.register(email.trim(), password).fold(
+            val result = authRepository.register(email.trim(), password)
+            _uiState.value = result.fold(
                 onSuccess = { AuthUiState.Success },
                 onFailure = { AuthUiState.Error(it.message ?: "Ошибка регистрации") }
             )
+            if (result.isSuccess) loadSubscriptionStatus()
         }
     }
 
     fun logout() {
         authRepository.logout()
+        _isSubscribed.value = false
         _uiState.value = AuthUiState.Idle
     }
 

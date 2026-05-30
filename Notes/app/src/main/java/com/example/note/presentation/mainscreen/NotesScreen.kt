@@ -19,10 +19,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -53,6 +58,7 @@ fun NotesScreen(
     controller: NavHostController,
     mainViewModel: MainViewModel,
     isSuper: Boolean = false,
+    isSubscribed: Boolean = false,
     onAdminClick: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
@@ -60,6 +66,20 @@ fun NotesScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scheme = MaterialTheme.colorScheme
+    var showSubscriptionDialog by remember { mutableStateOf(false) }
+
+    if (showSubscriptionDialog) {
+        AlertDialog(
+            onDismissRequest = { showSubscriptionDialog = false },
+            title = { Text("Функция недоступна") },
+            text = { Text("Голосовые заметки доступны только по подписке. Обратитесь к администратору для её активации.") },
+            confirmButton = {
+                TextButton(onClick = { showSubscriptionDialog = false }) {
+                    Text("Понятно")
+                }
+            }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -118,14 +138,18 @@ fun NotesScreen(
                             )
                         }
                         IconButton(onClick = {
-                            val intent = Intent(context, VoskTranscriptionScreen::class.java)
-                            context.startActivity(intent)
+                            if (isSubscribed) {
+                                val intent = Intent(context, VoskTranscriptionScreen::class.java)
+                                context.startActivity(intent)
+                            } else {
+                                showSubscriptionDialog = true
+                            }
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_microphone),
                                 contentDescription = "Транскрибация",
                                 modifier = Modifier.size(28.dp),
-                                tint = scheme.primary
+                                tint = if (isSubscribed) scheme.primary else scheme.onSurfaceVariant
                             )
                         }
                         if (isSuper) {

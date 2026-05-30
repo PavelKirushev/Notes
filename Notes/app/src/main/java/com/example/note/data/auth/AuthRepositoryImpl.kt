@@ -51,6 +51,16 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun checkSubscription(): Boolean {
+        val token = tokenStorage.getToken() ?: return false
+        return try {
+            val response = api.getMySubscription("Bearer $token")
+            response.isSuccessful && response.body()?.data?.active == true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     override suspend fun validateToken(): Boolean {
         val token = tokenStorage.getToken() ?: return false
         return try {

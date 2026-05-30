@@ -24,3 +24,8 @@ data class UserDto(
     @SerializedName("is_super") val isSuper: Boolean,
     @SerializedName("created_at") val createdAt: String
 )
+
+data class MySubscriptionResponse(
+    val active: Boolean,
+    val subscription: Any?
+)

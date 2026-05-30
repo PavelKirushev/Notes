@@ -16,4 +16,7 @@ interface AuthApiService {
 
     @GET("api/v1/auth/me")
     suspend fun me(@Header("Authorization") token: String): Response<ApiResponse<UserDto>>
+
+    @GET("api/v1/subscriptions/me")
+    suspend fun getMySubscription(@Header("Authorization") token: String): Response<ApiResponse<MySubscriptionResponse>>
 }
