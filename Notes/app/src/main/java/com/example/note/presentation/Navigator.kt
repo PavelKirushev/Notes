@@ -95,11 +95,12 @@ fun Navigator(
 
         composable(NOTE_DETAILS_ROUTE) {
             val mainViewModel: MainViewModel = koinViewModel()
+            val isSubscribed by authViewModel.isSubscribed.collectAsState()
             val noteId = it.arguments?.getString(NOTE_ID_ROUTE)?.toIntOrNull()
             if (noteId != null) {
                 val note = mainViewModel.noteListFlow.value.find { note -> note.id == noteId }
                 if (note != null) {
-                    NoteWindow(controller, note, mainViewModel)
+                    NoteWindow(controller, note, mainViewModel, isSubscribed)
                 }
             }
         }

@@ -11,6 +11,7 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	Auth     AuthConfig
+	Gemini   GeminiConfig
 }
 
 type ServerConfig struct {
@@ -36,6 +37,10 @@ type AuthConfig struct {
 	BcryptCost int
 }
 
+type GeminiConfig struct {
+	APIKey string
+}
+
 // Load читает конфигурацию из переменных окружения с дефолтными значениями.
 func Load() *Config {
 	tokenTTL, _ := time.ParseDuration(getEnv("JWT_TOKEN_TTL", "24h"))
@@ -43,6 +48,9 @@ func Load() *Config {
 	maxConns, _ := strconv.Atoi(getEnv("DB_MAX_CONNS", "25"))
 
 	return &Config{
+		Gemini: GeminiConfig{
+			APIKey: getEnv("GEMINI_API_KEY", ""),
+		},
 		Server: ServerConfig{
 			Port:            getEnv("SERVER_PORT", "8080"),
 			ReadTimeout:     10 * time.Second,

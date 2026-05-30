@@ -2,18 +2,26 @@ package com.example.note.presentation.noteWindow
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,38 +39,86 @@ import com.example.note.R
 import com.example.note.domain.Note
 import com.example.note.presentation.MainViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
-/**
- * Composable function to add/edit/delete(if empty) note
- *
- * @param controller NavHostController for navigation in app
- * @param note Note for show if it already exists
- * @param mainViewModel MainViewModel to manage app state
- */
 @Composable
-fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainViewModel) {
+fun NoteWindow(
+    controller: NavHostController,
+    note: Note,
+    mainViewModel: MainViewModel,
+    isSubscribed: Boolean = false
+) {
     val scope = rememberCoroutineScope()
+    val summaryViewModel: SummaryViewModel = koinViewModel()
+    val summaryState by summaryViewModel.state.collectAsState()
+
     var title by remember { mutableStateOf(note.title) }
     var text by remember { mutableStateOf(note.text) }
     var checkChange by remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
-    val noteCopy by remember {
-        mutableStateOf(
-            Note(
-                note.id,
-                note.title,
-                note.text
-            )
-        )
-    }
+    var showSubscriptionDialog by remember { mutableStateOf(false) }
+    val noteCopy by remember { mutableStateOf(Note(note.id, note.title, note.text)) }
+
     LaunchedEffect(title, text) {
-        val updatedNote = note.copy(title = title, text = text)
-        scope.launch {
-            mainViewModel.editNote(updatedNote)
-        }
+        scope.launch { mainViewModel.editNote(note.copy(title = title, text = text)) }
     }
 
     val scheme = MaterialTheme.colorScheme
+
+    // Диалог: нет подписки
+    if (showSubscriptionDialog) {
+        AlertDialog(
+            onDismissRequest = { showSubscriptionDialog = false },
+            title = { Text("Функция недоступна") },
+            text = { Text("Summary доступен только по подписке. Обратитесь к администратору.") },
+            confirmButton = {
+                TextButton(onClick = { showSubscriptionDialog = false }) { Text("Понятно") }
+            }
+        )
+    }
+
+    // Диалог: результат summary
+    when (val s = summaryState) {
+        is SummaryState.Loading -> {
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text("Генерация summary...") },
+                text = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                },
+                confirmButton = {}
+            )
+        }
+        is SummaryState.Success -> {
+            AlertDialog(
+                onDismissRequest = { summaryViewModel.reset() },
+                title = { Text("Summary") },
+                text = {
+                    Text(
+                        text = s.summary,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = scheme.onSurface
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { summaryViewModel.reset() }) { Text("Закрыть") }
+                }
+            )
+        }
+        is SummaryState.Error -> {
+            AlertDialog(
+                onDismissRequest = { summaryViewModel.reset() },
+                title = { Text("Ошибка") },
+                text = { Text(s.message) },
+                confirmButton = {
+                    TextButton(onClick = { summaryViewModel.reset() }) { Text("OK") }
+                }
+            )
+        }
+        else -> {}
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Surface(
@@ -86,9 +142,7 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                                 showDialog.value = true
                             } else {
                                 if (title.isEmpty() && text.isEmpty()) {
-                                    scope.launch {
-                                        mainViewModel.removeNote(note.id)
-                                    }
+                                    scope.launch { mainViewModel.removeNote(note.id) }
                                 }
                                 controller.navigateUp()
                             }
@@ -107,22 +161,43 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
                         color = scheme.onSurface
                     )
                 }
-                if (checkChange) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.done),
-                        contentDescription = stringResource(R.string.ready_button),
-                        Modifier
-                            .size(45.dp)
-                            .padding(
-                                top = dimensionResource(R.dimen.padding_7),
-                                end = dimensionResource(R.dimen.padding_10)
-                            )
-                            .clickable {
-                                controller.navigateUp()
-                            },
-                        tint = scheme.primary
-                    )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Кнопка Summary — иконка "звёздочка AI"
+                    IconButton(
+                        onClick = {
+                            if (isSubscribed) {
+                                val noteText = "$title\n$text".trim()
+                                summaryViewModel.summarize(noteText)
+                            } else {
+                                showSubscriptionDialog = true
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = "Summary",
+                            modifier = Modifier.size(26.dp),
+                            tint = if (isSubscribed) scheme.primary else scheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (checkChange) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.done),
+                            contentDescription = stringResource(R.string.ready_button),
+                            Modifier
+                                .size(45.dp)
+                                .padding(
+                                    top = dimensionResource(R.dimen.padding_7),
+                                    end = dimensionResource(R.dimen.padding_10)
+                                )
+                                .clickable { controller.navigateUp() },
+                            tint = scheme.primary
+                        )
+                    }
                 }
+
                 if (showDialog.value) {
                     DialogBeforeExit(controller, mainViewModel, noteCopy, showDialog)
                 }
@@ -143,10 +218,7 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
             SimpleTextField(
                 text = title,
                 fontSize = 40.sp,
-                onValueChange = {
-                    title = it
-                    checkChange = true
-                },
+                onValueChange = { title = it; checkChange = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_20))
@@ -154,10 +226,7 @@ fun NoteWindow(controller: NavHostController, note: Note, mainViewModel: MainVie
             SimpleTextField(
                 text = text,
                 fontSize = 20.sp,
-                onValueChange = {
-                    text = it
-                    checkChange = true
-                },
+                onValueChange = { text = it; checkChange = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

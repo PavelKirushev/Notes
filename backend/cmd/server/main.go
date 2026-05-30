@@ -20,6 +20,7 @@ import (
 	"github.com/onweg/backend/internal/repository/postgres"
 	"github.com/onweg/backend/internal/service"
 	"github.com/onweg/backend/pkg/database"
+	"github.com/onweg/backend/pkg/gemini"
 	"github.com/onweg/backend/pkg/hash"
 	"github.com/onweg/backend/pkg/jwt"
 )
@@ -59,9 +60,12 @@ func main() {
 	userSvc := service.NewUserService(userRepo)
 	subSvc := service.NewSubscriptionService(subRepo)
 
+	geminiClient := gemini.NewClient(cfg.Gemini.APIKey)
+
 	authHandler := handler.NewAuthHandler(authSvc)
 	userHandler := handler.NewUserHandler(userSvc)
 	subHandler := handler.NewSubscriptionHandler(subSvc)
+	summaryHandler := handler.NewSummaryHandler(geminiClient, userRepo, subRepo)
 
 	jwtMiddleware := authmw.NewJWTMiddleware(jwtManager)
 	superUserMiddleware := authmw.NewSuperUserMiddleware(userRepo)
@@ -99,6 +103,12 @@ func main() {
 		})
 
 		// ── Админ (только суперпользователь) ─────────────────────────────────
+		// ── Summary (подписчики + суперпользователь) ─────────────────────────
+		r.Route("/notes", func(r chi.Router) {
+			r.Use(jwtMiddleware.Authenticate)
+			r.Post("/summary", summaryHandler.Summarize)
+		})
+
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(jwtMiddleware.Authenticate)
 			r.Use(superUserMiddleware.RequireSuperUser)

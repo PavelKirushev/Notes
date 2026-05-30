@@ -48,4 +48,6 @@ val authModule = module {
     viewModel { AuthViewModel(get()) }
 
     viewModel { AdminViewModel(get(), get()) }
+
+    viewModel { com.example.note.presentation.noteWindow.SummaryViewModel(get(), get()) }
 }

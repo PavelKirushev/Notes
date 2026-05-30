@@ -29,3 +29,6 @@ data class MySubscriptionResponse(
     val active: Boolean,
     val subscription: Any?
 )
+
+data class SummaryRequest(val text: String)
+data class SummaryResponse(val summary: String)

@@ -19,4 +19,10 @@ interface AuthApiService {
 
     @GET("api/v1/subscriptions/me")
     suspend fun getMySubscription(@Header("Authorization") token: String): Response<ApiResponse<MySubscriptionResponse>>
+
+    @POST("api/v1/notes/summary")
+    suspend fun summarize(
+        @Header("Authorization") token: String,
+        @Body request: SummaryRequest
+    ): Response<ApiResponse<SummaryResponse>>
 }

@@ -44,6 +44,7 @@ services:
       JWT_SECRET:     ${JWT_SECRET:-change-me-in-production-min-32-chars}
       JWT_TOKEN_TTL:  ${JWT_TOKEN_TTL:-24h}
       BCRYPT_COST:    ${BCRYPT_COST:-12}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     ports:
       - "8080:8080"
     depends_on:
