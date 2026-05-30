@@ -104,11 +104,11 @@ fun NotesScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                val newId = mainViewModel.getNextNoteId()
                                 scope.launch {
-                                    mainViewModel.addNote(Note(newId, "", ""))
+                                    // id=0 → Room сам генерирует уникальный id глобально
+                                    val newId = mainViewModel.addNote(Note(0, "", ""))
+                                    controller.navigate(DETAILS_PATH + newId)
                                 }
-                                controller.navigate(DETAILS_PATH + newId)
                             }
                         ) {
                             Icon(

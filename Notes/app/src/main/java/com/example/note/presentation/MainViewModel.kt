@@ -30,14 +30,9 @@ class MainViewModel(
         }
     }
 
-    fun getNextNoteId(): Int {
-        return noteListFlow.value.maxOfOrNull { it.id }?.plus(1) ?: 1
-    }
-
-    suspend fun addNote(newNote: Note) {
-        addNoteUseCase.addNote(newNote)
-        val updatedList = _noteListFlow.value + newNote
-        _noteListFlow.value = updatedList
+    // Сохраняет заметку и возвращает id сгенерированный Room (autoGenerate)
+    suspend fun addNote(newNote: Note): Int {
+        return addNoteUseCase.addNote(newNote)
     }
 
     suspend fun editNote(updatedNote: Note) {

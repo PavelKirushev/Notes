@@ -9,7 +9,7 @@ import com.example.note.domain.NoteListRepository
  *  @param noteListRepository - class that realizes interface NoteListRepository
  */
 class AddNoteUseCase(private val noteListRepository: NoteListRepository) {
-    suspend fun addNote(note: Note){
-        noteListRepository.addNote(note)
+    suspend fun addNote(note: Note): Int {
+        return noteListRepository.addNote(note)
     }
 }

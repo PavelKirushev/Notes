@@ -13,8 +13,8 @@ class NoteListRepositoryImpl(
 
     private val userId: Long get() = tokenStorage.getUserId()
 
-    override suspend fun addNote(note: Note) {
-        noteDao.addNote(note.toEntity(userId))
+    override suspend fun addNote(note: Note): Int {
+        return noteDao.addNote(note.toEntity(userId)).toInt()
     }
 
     override suspend fun editNote(note: Note) {
