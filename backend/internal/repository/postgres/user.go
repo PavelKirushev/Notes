@@ -109,6 +109,7 @@ func (r *UserRepository) GetAllWithSubscriptions(ctx context.Context) ([]*domain
 		       s.id, s.status, s.plan, s.started_at, s.expires_at
 		FROM users u
 		LEFT JOIN subscriptions s ON s.user_id = u.id
+		WHERE u.is_super = false
 		ORDER BY u.id ASC
 	`
 

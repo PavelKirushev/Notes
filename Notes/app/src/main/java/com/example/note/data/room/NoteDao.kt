@@ -7,22 +7,19 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Data access object for interaction with the DB with CRUD operations
- *
- */
 @Dao
 interface NoteDao {
     @Insert(entity = NoteEntity::class)
     suspend fun addNote(note: NoteEntity): Long
+
     @Update
     suspend fun editNote(note: NoteEntity)
 
     @Delete
     suspend fun delete(note: NoteEntity)
 
-    @Query("SELECT * FROM notes")
-    fun getNoteList(): Flow<List<NoteEntity>>
+    @Query("SELECT * FROM notes WHERE userId = :userId")
+    fun getNoteList(userId: Long): Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM notes WHERE id = :id")
     suspend fun getNote(id: Int): NoteEntity?

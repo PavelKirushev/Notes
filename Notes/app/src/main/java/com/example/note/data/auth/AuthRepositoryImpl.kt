@@ -18,6 +18,7 @@ class AuthRepositoryImpl(
                 val data = response.body()!!.data!!
                 tokenStorage.saveToken(data.token)
                 tokenStorage.saveIsSuper(data.user.isSuper)
+                tokenStorage.saveUserId(data.user.id)
                 Result.success(Unit)
             } else {
                 val message = parseErrorBody(response.errorBody()?.string())
@@ -37,6 +38,7 @@ class AuthRepositoryImpl(
                 val data = response.body()!!.data!!
                 tokenStorage.saveToken(data.token)
                 tokenStorage.saveIsSuper(data.user.isSuper)
+                tokenStorage.saveUserId(data.user.id)
                 Result.success(Unit)
             } else {
                 val message = parseErrorBody(response.errorBody()?.string())
