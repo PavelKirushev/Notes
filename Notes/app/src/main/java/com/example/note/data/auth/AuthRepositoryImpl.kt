@@ -15,8 +15,9 @@ class AuthRepositoryImpl(
         return try {
             val response = api.login(AuthRequest(email, password))
             if (response.isSuccessful && response.body()?.success == true) {
-                val token = response.body()!!.data!!.token
-                tokenStorage.saveToken(token)
+                val data = response.body()!!.data!!
+                tokenStorage.saveToken(data.token)
+                tokenStorage.saveIsSuper(data.user.isSuper)
                 Result.success(Unit)
             } else {
                 val message = parseErrorBody(response.errorBody()?.string())
@@ -33,8 +34,9 @@ class AuthRepositoryImpl(
         return try {
             val response = api.register(AuthRequest(email, password))
             if (response.isSuccessful && response.body()?.success == true) {
-                val token = response.body()!!.data!!.token
-                tokenStorage.saveToken(token)
+                val data = response.body()!!.data!!
+                tokenStorage.saveToken(data.token)
+                tokenStorage.saveIsSuper(data.user.isSuper)
                 Result.success(Unit)
             } else {
                 val message = parseErrorBody(response.errorBody()?.string())
@@ -64,6 +66,8 @@ class AuthRepositoryImpl(
     }
 
     override fun isLoggedIn(): Boolean = tokenStorage.hasToken()
+
+    override fun isSuper(): Boolean = tokenStorage.isSuper()
 
     override fun logout() = tokenStorage.clearToken()
 

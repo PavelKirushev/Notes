@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/onweg/backend/internal/domain"
 	"github.com/onweg/backend/internal/repository"
@@ -99,6 +100,57 @@ func (r *UserRepository) GetByID(ctx context.Context, id int64) (*domain.User, e
 	}
 
 	return user, nil
+}
+
+// GetAllWithSubscriptions возвращает всех пользователей с их подписками (LEFT JOIN).
+func (r *UserRepository) GetAllWithSubscriptions(ctx context.Context) ([]*domain.UserWithSubscription, error) {
+	const query = `
+		SELECT u.id, u.email, u.is_super, u.created_at,
+		       s.id, s.status, s.plan, s.started_at, s.expires_at
+		FROM users u
+		LEFT JOIN subscriptions s ON s.user_id = u.id
+		ORDER BY u.id ASC
+	`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: get all with subscriptions: %w", err)
+	}
+	defer rows.Close()
+
+	var result []*domain.UserWithSubscription
+	for rows.Next() {
+		u := &domain.UserWithSubscription{}
+		var (
+			subID        *int64
+			subStatus    *string
+			subPlan      *string
+			subStartedAt *time.Time
+			subExpiresAt *time.Time
+		)
+		if err := rows.Scan(
+			&u.ID, &u.Email, &u.IsSuper, &u.CreatedAt,
+			&subID, &subStatus, &subPlan, &subStartedAt, &subExpiresAt,
+		); err != nil {
+			return nil, fmt.Errorf("postgres: scan user with subscription: %w", err)
+		}
+		if subID != nil {
+			u.Subscription = &domain.Subscription{
+				ID:        *subID,
+				UserID:    u.ID,
+				Status:    domain.SubscriptionStatus(*subStatus),
+				Plan:      *subPlan,
+				StartedAt: subStartedAt,
+				ExpiresAt: subExpiresAt,
+			}
+			u.HasActive = u.Subscription.IsActive()
+		}
+		result = append(result, u)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: rows error: %w", err)
+	}
+	return result, nil
 }
 
 // GetAll возвращает список всех пользователей (для суперпользователя).

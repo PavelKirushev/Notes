@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.note.presentation.admin.AdminScreen
 import com.example.note.presentation.auth.AuthViewModel
 import com.example.note.presentation.auth.LoginScreen
 import com.example.note.presentation.auth.RegisterScreen
@@ -21,6 +22,7 @@ import com.example.note.presentation.noteWindow.NoteWindow
 private const val LOGIN_ROUTE = "login"
 private const val REGISTER_ROUTE = "register"
 private const val HOME_ROUTE = "home"
+private const val ADMIN_ROUTE = "admin"
 private const val NOTE_DETAILS_ROUTE = "details/{noteId}"
 private const val NOTE_ID_ROUTE = "noteId"
 
@@ -74,6 +76,8 @@ fun Navigator(
             NotesScreen(
                 controller = controller,
                 mainViewModel = mainViewModel,
+                isSuper = authViewModel.isSuper(),
+                onAdminClick = { controller.navigate(ADMIN_ROUTE) },
                 onLogout = {
                     authViewModel.logout()
                     controller.navigate(LOGIN_ROUTE) {
@@ -81,6 +85,10 @@ fun Navigator(
                     }
                 }
             )
+        }
+
+        composable(ADMIN_ROUTE) {
+            AdminScreen(controller = controller)
         }
 
         composable(NOTE_DETAILS_ROUTE) {

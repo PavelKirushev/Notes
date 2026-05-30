@@ -40,3 +40,13 @@ type AuthResponse struct {
 	Token string `json:"token"`
 	User  *User  `json:"user"`
 }
+
+// UserWithSubscription — пользователь с информацией о подписке (для admin-панели).
+type UserWithSubscription struct {
+	ID           int64         `json:"id"`
+	Email        string        `json:"email"`
+	IsSuper      bool          `json:"is_super"`
+	CreatedAt    time.Time     `json:"created_at"`
+	Subscription *Subscription `json:"subscription"`
+	HasActive    bool          `json:"has_active"`
+}

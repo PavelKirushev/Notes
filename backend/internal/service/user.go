@@ -27,3 +27,12 @@ func (s *userService) ListAll(ctx context.Context) ([]*domain.User, error) {
 	}
 	return users, nil
 }
+
+// ListAllWithSubscriptions возвращает всех пользователей с их подписками.
+func (s *userService) ListAllWithSubscriptions(ctx context.Context) ([]*domain.UserWithSubscription, error) {
+	users, err := s.userRepo.GetAllWithSubscriptions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("user service: list all with subscriptions: %w", err)
+	}
+	return users, nil
+}

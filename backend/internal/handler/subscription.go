@@ -40,6 +40,24 @@ func (h *SubscriptionHandler) GetMy(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Cancel godoc
+// DELETE /api/v1/admin/users/{userID}/subscription
+func (h *SubscriptionHandler) Cancel(w http.ResponseWriter, r *http.Request) {
+	userIDStr := chi.URLParam(r, "userID")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil || userID <= 0 {
+		writeError(w, http.StatusBadRequest, "invalid user_id")
+		return
+	}
+
+	if err := h.subService.CancelSubscription(r.Context(), userID); err != nil {
+		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
+	}
+
+	writeSuccess(w, http.StatusOK, map[string]string{"message": "subscription cancelled"})
+}
+
 // Set godoc
 // PUT /api/v1/admin/users/{userID}/subscription
 // Только суперпользователь. Выставляет подписку пользователю.

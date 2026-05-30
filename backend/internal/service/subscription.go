@@ -50,3 +50,12 @@ func (s *subscriptionService) SetSubscription(ctx context.Context, input domain.
 
 	return result, nil
 }
+
+// CancelSubscription деактивирует подписку пользователя.
+func (s *subscriptionService) CancelSubscription(ctx context.Context, userID int64) error {
+	err := s.subRepo.Cancel(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("subscription service: cancel: %w", err)
+	}
+	return nil
+}

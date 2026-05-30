@@ -103,8 +103,9 @@ func main() {
 			r.Use(jwtMiddleware.Authenticate)
 			r.Use(superUserMiddleware.RequireSuperUser)
 
-			r.Get("/users", userHandler.List)                            // все пользователи
-			r.Put("/users/{userID}/subscription", subHandler.Set)       // выставить подписку
+			r.Get("/users", userHandler.List)
+			r.Put("/users/{userID}/subscription", subHandler.Set)
+			r.Delete("/users/{userID}/subscription", subHandler.Cancel)
 		})
 	})
 

@@ -21,16 +21,13 @@ type AuthService interface {
 
 // UserService — контракт сервиса управления пользователями.
 type UserService interface {
-	// ListAll возвращает всех пользователей. Вызывать только из защищённого маршрута.
 	ListAll(ctx context.Context) ([]*domain.User, error)
+	ListAllWithSubscriptions(ctx context.Context) ([]*domain.UserWithSubscription, error)
 }
 
 // SubscriptionService — контракт сервиса подписок.
 type SubscriptionService interface {
-	// GetMySubscription возвращает подписку текущего пользователя.
 	GetMySubscription(ctx context.Context, userID int64) (*domain.Subscription, error)
-
-	// SetSubscription выставляет или обновляет подписку (вызывается суперпользователем
-	// или в будущем — платёжной системой через webhook).
 	SetSubscription(ctx context.Context, input domain.SetSubscriptionInput) (*domain.Subscription, error)
+	CancelSubscription(ctx context.Context, userID int64) error
 }

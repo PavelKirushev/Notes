@@ -41,4 +41,11 @@ val authModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 
     single { AuthViewModel(get()) }
+
+    single {
+        get<Retrofit>()
+            .create(com.example.note.data.api.AdminApiService::class.java)
+    }
+
+    single { com.example.note.presentation.admin.AdminViewModel(get(), get()) }
 }

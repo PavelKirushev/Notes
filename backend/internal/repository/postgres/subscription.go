@@ -50,6 +50,24 @@ func (r *SubscriptionRepository) GetByUserID(ctx context.Context, userID int64) 
 	return sub, nil
 }
 
+// Cancel деактивирует подписку пользователя.
+func (r *SubscriptionRepository) Cancel(ctx context.Context, userID int64) error {
+	const query = `
+		UPDATE subscriptions
+		SET status = $2, expires_at = NULL, updated_at = NOW()
+		WHERE user_id = $1
+	`
+	res, err := r.db.ExecContext(ctx, query, userID, domain.SubscriptionCancelled)
+	if err != nil {
+		return fmt.Errorf("postgres: cancel subscription: %w", err)
+	}
+	rows, _ := res.RowsAffected()
+	if rows == 0 {
+		return domain.ErrSubscriptionNotFound
+	}
+	return nil
+}
+
 // Upsert создаёт подписку если её нет, или обновляет существующую.
 // Когда подключишь платёжную систему — она будет вызывать именно этот метод.
 func (r *SubscriptionRepository) Upsert(ctx context.Context, sub *domain.Subscription) (*domain.Subscription, error) {

@@ -46,6 +46,8 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     fun isLoggedIn(): Boolean = authRepository.isLoggedIn()
 
+    fun isSuper(): Boolean = authRepository.isSuper()
+
     fun login(email: String, password: String) {
         if (!validate(email, password)) return
         viewModelScope.launch {

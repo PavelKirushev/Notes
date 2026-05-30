@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +50,13 @@ private const val Y_OFFSET = 1600f
  * @param mainViewModel mainViewModel to manage app state
  */
 @Composable
-fun NotesScreen(controller: NavHostController, mainViewModel: MainViewModel, onLogout: () -> Unit = {}) {
+fun NotesScreen(
+    controller: NavHostController,
+    mainViewModel: MainViewModel,
+    isSuper: Boolean = false,
+    onAdminClick: () -> Unit = {},
+    onLogout: () -> Unit = {}
+) {
     val listNote by mainViewModel.noteListFlow.collectAsState()
     val scope = CoroutineScope(Dispatchers.IO)
     val context = LocalContext.current
@@ -126,6 +133,16 @@ fun NotesScreen(controller: NavHostController, mainViewModel: MainViewModel, onL
                                 modifier = Modifier.size(28.dp),
                                 tint = scheme.primary
                             )
+                        }
+                        if (isSuper) {
+                            IconButton(onClick = onAdminClick) {
+                                Icon(
+                                    imageVector = Icons.Default.AdminPanelSettings,
+                                    contentDescription = "Админ",
+                                    modifier = Modifier.size(26.dp),
+                                    tint = scheme.primary
+                                )
+                            }
                         }
                         IconButton(onClick = onLogout) {
                             Icon(
