@@ -2,12 +2,13 @@ package com.example.note.app
 
 import android.app.Application
 import com.example.note.di.appModule
+import com.example.note.di.authModule
 import com.example.note.di.dataModule
 import com.example.note.di.domainModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class App: Application() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
@@ -16,7 +17,8 @@ class App: Application() {
             modules(listOf(
                 appModule,
                 domainModule,
-                dataModule
+                dataModule,
+                authModule
             ))
         }
     }

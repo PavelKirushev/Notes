@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.note.presentation.auth.AuthViewModel
 import com.example.note.presentation.theme.NoteTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -22,14 +23,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Main(){
-    val mainScreenViewModel: MainViewModel = koinViewModel()
+fun Main() {
+    val mainViewModel: MainViewModel = koinViewModel()
+    val authViewModel: AuthViewModel = koinViewModel()
     val controller = rememberNavController()
+
     NoteTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            Navigator(mainScreenViewModel, controller)
+            Navigator(mainViewModel, authViewModel, controller)
         }
     }
 }
-
-
